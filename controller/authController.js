@@ -36,15 +36,23 @@ module.exports = {
             let password = Crypto.createHmac("sha256", "token$$$").update(request.body.password).digest("hex")
             let queryLogin = `SELECT * FROM users WHERE username = ${db.escape(request.body.username)} AND password = ${db.escape(password)}`
             let getUser = await dbQuery(queryLogin)
+            console.log(getUser.status)
 
-            if (getUser.length > 0) {
-                let {id, uid, username, email, status, role} = getUser[0]
-                let token = createToken({id, uid, username, email, status, role})
-                response.status(200).send({id, uid, username, email, status, role, token})
+            if (getUser.status == 3) {
+                response.status(400).send('Your account is not active!')
             }
+            
             else {
-                response.status(400).send('Account with that password not found!')
+                if (getUser.length > 0) {
+                    let {id, uid, username, email, status, role} = getUser[0]
+                    let token = createToken({id, uid, username, email, status, role})
+                    response.status(200).send({id, uid, username, email, status, role, token})
+                }
+                else {
+                    response.status(400).send('Account with that password not found!')
+                }
             }
+
         } 
         catch (error) {
             next(error)
