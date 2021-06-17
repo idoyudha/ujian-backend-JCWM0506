@@ -1,5 +1,4 @@
 const { db, dbQuery, createToken } = require('../config')
-const Crypto = require('crypto')
 
 module.exports = {
     register: async (request, response, next) => {

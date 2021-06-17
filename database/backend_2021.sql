@@ -139,7 +139,7 @@ CREATE TABLE `schedules` (
   CONSTRAINT `fk_schedule-location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
   CONSTRAINT `fk_schedule-movies` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`),
   CONSTRAINT `fk_time-show` FOREIGN KEY (`time_id`) REFERENCES `show_times` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -148,7 +148,7 @@ CREATE TABLE `schedules` (
 
 LOCK TABLES `schedules` WRITE;
 /*!40000 ALTER TABLE `schedules` DISABLE KEYS */;
-INSERT INTO `schedules` VALUES (1,1,1,3),(2,1,1,4),(3,1,1,5),(4,1,2,1),(5,1,2,5),(6,1,2,6),(7,1,3,1),(8,1,3,2),(9,1,3,3),(10,2,2,2),(11,2,2,4),(12,2,2,6),(13,3,1,3),(14,3,3,5),(15,3,3,6),(16,4,1,1),(17,4,2,2),(18,4,2,4),(19,4,3,3),(20,5,1,5),(21,5,2,5),(22,5,3,5),(23,6,1,1),(24,6,2,2),(25,6,3,3),(26,8,1,4),(27,8,1,6),(28,9,1,1),(29,9,1,2),(31,9,1,3),(32,12,1,3);
+INSERT INTO `schedules` VALUES (1,1,1,3),(2,1,1,4),(3,1,1,5),(4,1,2,1),(5,1,2,5),(6,1,2,6),(7,1,3,1),(8,1,3,2),(9,1,3,3),(10,2,2,2),(11,2,2,4),(12,2,2,6),(13,3,1,3),(14,3,3,5),(15,3,3,6),(16,4,1,1),(17,4,2,2),(18,4,2,4),(19,4,3,3),(20,5,1,5),(21,5,2,5),(22,5,3,5),(23,6,1,1),(24,6,2,2),(25,6,3,3),(26,8,1,4),(27,8,1,6),(28,9,1,1),(29,9,1,2),(31,9,1,3),(32,12,1,3),(33,11,1,3),(34,12,1,3);
 /*!40000 ALTER TABLE `schedules` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -220,7 +220,7 @@ CREATE TABLE `users` (
   KEY `fk_user-role_idx` (`role`),
   CONSTRAINT `fk_user-role` FOREIGN KEY (`role`) REFERENCES `roles` (`id`),
   CONSTRAINT `fk_user-status` FOREIGN KEY (`status`) REFERENCES `status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,9 +229,13 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'1623899632048','idoyudha','idoyudha@gmail.com','f4e80195085a99620c2f4bbec9a99a7c4503f3970a4e897c4d5fbd17201cac62',2,3),(2,'1623900876207','adminmovie','admin@mail.com','7c8bf53a2597879a2c146b8e9069d83a325d8b0d07f3abe94588da55ffd09f2b',1,1);
+INSERT INTO `users` VALUES (1,'1623899632048','idoyudha','idoyudha@gmail.com','ido!123',1,1),(2,'1623900876207','adminmovie','admin@mail.com','admin!123',1,1),(3,'1623910281242','leonjack','leonjack@mail.com','leonjack!123',2,3);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping events for database 'backend_2021'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -242,4 +246,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-17 11:28:58
+-- Dump completed on 2021-06-17 13:33:37
