@@ -29,6 +29,7 @@ module.exports = {
             let str = query.join(' AND ')
             // console.log(str)
             let queryMovies = `SELECT name, release_date, release_month, release_year, duration_min, genre, description, movie_status.status as status, location, time FROM movies JOIN movie_status ON movies.id = movie_status.id JOIN schedules ON movies.id = schedules.movie_id JOIN show_times ON schedules.time_id = show_times.id JOIN locations ON schedules.location_id = locations.id WHERE ${str}`
+            // console.log(queryMovies)
             let DataMovies = await dbQuery(queryMovies)
             response.status(200).send(DataMovies)
             // response.status(200).send("getMovieByParameter")
@@ -64,9 +65,9 @@ module.exports = {
     replaceMovieStatus: async (request, response, next) => {
         try {
             let auth = request.user
-            // console.log("Go to movie status", request.params.id)
-            let id = request.params.id.slice(3)
-
+            let id = request.params.id
+            console.log(auth)
+            
             if (auth.role == 1) {
                 console.log('Admin')
                 let queryUpdate = `UPDATE movies SET status = ${request.body.status} WHERE id = ${id}`
@@ -86,7 +87,7 @@ module.exports = {
     addMovieSchedule: async (request, response, next) => {
         try {
             let auth = request.user
-            let id = request.params.id.slice(3)
+            let id = request.params.id
             console.log("Go to schedule", id)
             if (auth.role == 1) {
                 console.log('Admin')

@@ -12,11 +12,11 @@ module.exports = {
             // let validPassword2 = request.body.password.match(/^(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/)
             console.log("Go to register", validUsername, validEmail, validPassword)
             if (validUsername && validEmail && validPassword) {
-                let password = db.escape(Crypto.createHmac("sha256", "token$$$").update(request.body.password).digest("hex"))
-                let queryRegister = `INSERT INTO users (uid, username, email, password, role, status) VALUES (${Date.now()}, ${db.escape(request.body.username)}, ${db.escape(request.body.email)}, ${password}, 2, 1)`
+                // let password = db.escape(Crypto.createHmac("sha256", "token$$$").update(request.body.password).digest("hex"))
+                let queryRegister = `INSERT INTO users (uid, username, email, password, role, status) VALUES (${Date.now()}, ${db.escape(request.body.username)}, ${db.escape(request.body.email)}, ${db.escape(request.body.password)}, 2, 1)`
                 let dataUser = await dbQuery(queryRegister)
                 let getUser = await dbQuery(`SELECT * FROM users WHERE id = ${dataUser.insertId}`)
-                let {id, uid, username, email, role, status} = getUser[0]
+                let {uid, username, email, role, status} = getUser[0]
                 let token = createToken({id, uid, username, email, role, status})
                 response.status(200).send({id, uid, username, email, token})
             }
@@ -32,16 +32,22 @@ module.exports = {
 
     login: async (request, response, next) => {
         try {
-            // console.log("Go to Login")
-            let password = Crypto.createHmac("sha256", "token$$$").update(request.body.password).digest("hex")
-            let queryLogin = `SELECT * FROM users WHERE username = ${db.escape(request.body.username)} AND password = ${db.escape(password)}`
-            let getUser = await dbQuery(queryLogin)
-            console.log(getUser.status)
+            console.log("Go to Login", request.body)
+            let data = request.body
+            let queryWhere = []
+            for (property in data) {
+                queryWhere.push(`${property} = ${db.escape(data[property])}`)
+                // console.log(property, data[property])
+            }
+            let queryLogin = `SELECT * FROM users WHERE ` + queryWhere.join(' AND ')
+            console.log(queryLogin)
 
-            if (getUser.status == 3) {
+            let getUser = await dbQuery(queryLogin)
+            console.log(getUser[0].status)
+
+            if (getUser[0].status != 1) {
                 response.status(400).send('Your account is not active!')
             }
-            
             else {
                 if (getUser.length > 0) {
                     let {id, uid, username, email, status, role} = getUser[0]
@@ -69,7 +75,7 @@ module.exports = {
                 
                 let querySelect = `SELECT uid, status.status FROM users JOIN status ON status.id = users.status WHERE users.id = ${auth}`
                 let responseData = await dbQuery(querySelect)
-                response.status(400).send(responseData)
+                response.status(400).send({uid : responseData[0].uid, status: 'deactive'})
             }
         } 
         catch (error) {
@@ -81,13 +87,26 @@ module.exports = {
         try {
             console.log("Go to activate")
             let auth = request.user.id
+            // console.log(auth)   
 
-            let queryActivate = `UPDATE users SET status = 1 WHERE id = ${auth} `
-            await dbQuery(queryActivate)
+            let queryGetData = `SELECT * FROM users WHERE id = ${auth}`
+            let dataUserValidation = await dbQuery(queryGetData)
+            console.log(dataUserValidation[0].status)
+            if (dataUserValidation[0].status == 3) {
+                response.status(400).send({message: "Your account has been closed, can't be activate anymore!"})
+            }
+            else if (dataUserValidation[0].status == 1) {
+                response.status(400).send({message: "Your account already active!"})
+            }
+            else {
+                let queryActivate = `UPDATE users SET status = 1 WHERE id = ${auth} `
+                await dbQuery(queryActivate)
+    
+                let querySelect = `SELECT uid, status.status FROM users JOIN status ON status.id = users.status WHERE users.id = ${auth}`
+                let responseData = await dbQuery(querySelect)
+                response.status(400).send(responseData)
+            }
 
-            let querySelect = `SELECT uid, status.status FROM users JOIN status ON status.id = users.status WHERE users.id = ${auth}`
-            let responseData = await dbQuery(querySelect)
-            response.status(400).send(responseData)
         } 
         catch (error) {
             next(error)
@@ -104,7 +123,7 @@ module.exports = {
 
             let querySelect = `SELECT uid, status.status FROM users JOIN status ON status.id = users.status WHERE users.id = ${auth}`
             let responseData = await dbQuery(querySelect)
-            response.status(400).send(responseData)
+            response.status(400).send(responseData[0])
         } 
         catch (error) {
             next(error)
